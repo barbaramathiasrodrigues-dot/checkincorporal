@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radar de Funcionamento - NeuroOrganizer</title>
+  
+  <!-- Tailwind CSS & FontAwesome Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase SDKs (Compat v9) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <style>
+    body { background-color: #0b0f19; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    .card-dark { background-color: #161e2e; border: 1px solid #283548; }
+    .tab-active { border-bottom: 2px solid #10b981; color: #10b981; font-weight: bold; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    @media print {
+      body { background-color: white !important; color: black !important; }
+      .no-print { display: none !important; }
+      .card-dark { background-color: white !important; border: 1px solid #ccc !important; color: black !important; }
+    }
+  </style>
+</head>
+<body class="p-4 md:p-6 max-w-5xl mx-auto">
+
+  <!-- HEADER RADAR DE FUNCIONAMENTO -->
+  <header class="card-dark rounded-2xl p-5 mb-6 shadow-xl relative overflow-hidden border-l-4 border-l-emerald-500 no-print">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold uppercase tracking-widest text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-800/50">💚 Radar de Funcionamento</span>
+          <span class="text-xs text-rose-400 bg-rose-950/60 px-2.5 py-1 rounded-full border border-rose-800/50">🍂 Fase Lútea / D24</span>
+        </div>
+        <h1 class="text-2xl font-bold mt-2 text-white flex items-center gap-2">
+          Perceber Cedo ➔ Agir Rápido ➔ Aprender
+        </h1>
+        <p class="text-sm text-slate-400 mt-1">"Reduzindo a carga cognitiva e transformando necessidade em ação concreta."</p>
+      </div>
+
+      <!-- BOTÕES DE ENTRADA RÁPIDA -->
+      <div class="flex flex-wrap gap-2">
+        <button onclick="openModal('express')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-lg">
+          <i class="fa-solid fa-store"></i> 🏪 Loja Express (1m)
+        </button>
+        <button onclick="openModal('completo')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-lg">
+          <i class="fa-solid fa-heart-pulse"></i> Completo (3m)
+        </button>
+        <button onclick="openModal('fast')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs px-2.5 py-2 rounded-xl border border-slate-700">
+          ⚡ 20s
+        </button>
+      </div>
+    </div>
+
+    <!-- ABAS DE NAVEGAÇÃO -->
+    <nav class="flex gap-4 border-b border-slate-800 mt-6 text-sm overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('agora')" id="tab-agora" class="pb-2 px-1 tab-active whitespace-nowrap"><i class="fa-solid fa-compass mr-1"></i> Painel Agora</button>
+      <button onclick="switchTab('hoje')" id="tab-hoje" class="pb-2 px-1 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-calendar-day mr-1"></i> Trajetória do Dia</button>
+      <button onclick="switchTab('insights')" id="tab-insights" class="pb-2 px-1 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-chart-line mr-1"></i> Dicas & Padrões</button>
+      <button onclick="switchTab('relatorios')" id="tab-relatorios" class="pb-2 px-1 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-file-pdf mr-1"></i> Relatório / Terapia</button>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="tabContent">
+
+    <!-- 🟢 TELA 1: PAINEL AGORA -->
+    <section id="sec-agora" class="space-y-4">
+      
+      <!-- CARD DE CONFIRMAÇÃO DO FEEDBACK DA AÇÃO (SE HOUVER ÚLTIMO REGISTRO) -->
+      <div id="feedbackActionCard" class="card-dark p-4 rounded-xl border border-amber-500/40 bg-amber-950/10 flex flex-col md:flex-row justify-between items-center gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 text-lg">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-amber-300 uppercase tracking-wider">Ação Recomendada Há Pouco</div>
+            <p class="text-sm text-slate-200">Sua última ação escolhida foi: <strong id="lastActionName" class="text-amber-300">Comer algo / Hidratar</strong>. Isso ajudou o seu sistema?</p>
+          </div>
+        </div>
+        <div class="flex gap-2 w-full md:w-auto">
+          <button onclick="confirmarAcao('Ajudou Muito')" class="flex-1 md:flex-none text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-2 rounded-lg">✔ Ajudou</button>
+          <button onclick="confirmarAcao('Parcialmente')" class="flex-1 md:flex-none text-xs bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-2 rounded-lg">◑ Parcial</button>
+          <button onclick="confirmarAcao('Não Ajudou')" class="flex-1 md:flex-none text-xs bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-2 rounded-lg">✖ Não Ajudou</button>
+        </div>
+      </div>
+
+      <!-- TRADUÇÃO DO ÚLTIMO REGISTRO DO MOMENTO -->
+      <div class="card-dark p-5 rounded-xl border-t-4 border-t-emerald-500 bg-gradient-to-b from-emerald-950/20 to-slate-900">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 uppercase tracking-wider">Última Leitura</span>
+            <h2 class="text-lg font-bold text-white mt-1" id="agoraDataHora">Hoje às --:--</h2>
+          </div>
+          <span id="agoraTagContexto" class="text-xs font-bold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">🏪 Loja</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs mb-5">
+          <div class="p-3 bg-slate-950/80 rounded-lg border border-slate-800">
+            <div class="text-slate-400 font-bold mb-1">🧘 Corpo & Sensorial</div>
+            <p class="text-slate-200" id="agoraCorpo">Nenhum registro ainda hoje.</p>
+          </div>
+          <div class="p-3 bg-slate-950/80 rounded-lg border border-slate-800">
+            <div class="text-slate-400 font-bold mb-1">⚙️ Funcionamento Pesado</div>
+            <p class="text-slate-200" id="agoraPesado">Nenhum registro ainda hoje.</p>
+          </div>
+          <div class="p-3 bg-slate-950/80 rounded-lg border border-slate-800">
+            <div class="text-slate-400 font-bold mb-1">🚧 Gargalo do Momento</div>
+            <p class="text-rose-300 font-semibold" id="agoraGargalo">Nenhum registro ainda hoje.</p>
+          </div>
+        </div>
+
+        <!-- AÇÃO DE MÁXIMA PRIORIDADE -->
+        <div class="p-4 bg-emerald-950/40 rounded-xl border border-emerald-800/80 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Sua Única Ação para os Próximos 20 Minutos</div>
+            <div class="text-base font-bold text-emerald-200 mt-0.5" id="agoraAcaoRecomendada">Faça um check-in para gerar sua recomendação.</div>
+          </div>
+          <i class="fa-solid fa-bullseye text-2xl text-emerald-400"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🗓️ TELA 2: TRAJETÓRIA DO DIA -->
+    <section id="sec-hoje" class="hidden space-y-4">
+      <div class="card-dark p-5 rounded-xl">
+        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-timeline text-emerald-400"></i> Trajetória do Dia (Manhã ➔ Meio ➔ Noite)
+        </h2>
+        <div id="trajetoriaList" class="space-y-3">
+          <p class="text-xs text-slate-500 italic">Carregando registros do dia...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📊 TELA 3: DICAS & PADRÕES (IA SAÚDE) -->
+    <section id="sec-insights" class="hidden space-y-4">
+      <div class="card-dark p-5 rounded-xl border border-emerald-500/30">
+        <h2 class="text-lg font-bold text-emerald-400 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Padrões Detectados nos Últimos Registros
+        </h2>
+        <p class="text-xs text-slate-400 mb-4">Dicas personalizadas geradas a partir da frequência de dados.</p>
+        
+        <div class="space-y-3">
+          <div class="p-3.5 bg-slate-900/80 rounded-xl border border-slate-800 flex items-start gap-3">
+            <i class="fa-solid fa-volume-xmark text-rose-400 text-lg mt-0.5"></i>
+            <div>
+              <div class="text-xs font-bold text-slate-200">Sensorial x Conversa na Loja</div>
+              <p class="text-xs text-slate-400 mt-0.5">Em 6 dos últimos 8 registros com "Barulho", conversar foi classificado como "Pesado". <strong>Dica:</strong> Usar tampão/fone antes de atender melhora a tolerância.</p>
+            </div>
+          </div>
+          <div class="p-3.5 bg-slate-900/80 rounded-xl border border-slate-800 flex items-start gap-3">
+            <i class="fa-solid fa-utensils text-emerald-400 text-lg mt-0.5"></i>
+            <div>
+              <div class="text-xs font-bold text-slate-200">Fome como Gatilho Executivo</div>
+              <p class="text-xs text-slate-400 mt-0.5">A fome apareceu antes de 4 episódios de irritabilidade executiva na Fase Lútea. A ação "Comer" teve 80% de aprovação de regulação.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📄 TELA 4: RELATÓRIOS (IMPRIMÍVEIS / TERAPIA) -->
+    <section id="sec-relatorios" class="hidden space-y-4">
+      <div class="card-dark p-5 rounded-xl">
+        <div class="flex justify-between items-center mb-4 no-print">
+          <div>
+            <h2 class="text-lg font-bold text-white"><i class="fa-solid fa-print text-emerald-400 mr-1"></i> Gerador de Relatório</h2>
+            <p class="text-xs text-slate-400">Exporte em formato limpo para o Rafael (Terapia) ou Médicos.</p>
+          </div>
+          <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-1.5">
+            <i class="fa-solid fa-print"></i> Imprimir / PDF
+          </button>
+        </div>
+
+        <div class="p-6 bg-white text-slate-900 rounded-xl border border-slate-300 space-y-4 text-xs font-sans">
+          <div class="border-b pb-3 flex justify-between items-center">
+            <div>
+              <h1 class="text-lg font-bold text-slate-900">Relatório de Saúde & Funcionamento - Bárbara</h1>
+              <p class="text-slate-600">Período: Últimos Registros • NeuroOrganizer</p>
+            </div>
+            <div class="text-right text-slate-500">
+              <div>Gerado em: 25/07/2026</div>
+              <div>Fase: Lútea / TDPM</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-bold uppercase text-slate-700 text-[11px] mb-1">1. Temas Marcados para Terapia (Conversa com Rafael)</h3>
+            <ul id="relatorioTerapiaList" class="list-disc pl-4 space-y-1 text-slate-800">
+              <li>Excesso de autoexigência com a entrega e interrupções contínuas na loja.</li>
+              <li>Percepção de culpa ao pausar para comer em momentos movimentados.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-bold uppercase text-slate-700 text-[11px] mb-1">2. Marcadores Físicos e Sensoriais Recorrentes</h3>
+            <p id="relatorioFisicoList" class="text-slate-800">Sensibilidade auditiva alta, dor na cervical/ombros e episódios de enjoo leve matinal.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: CHECK-IN LOJA EXPRESS (1 MINUTO) -->
+  <div id="modalExpress" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="card-dark w-full max-w-lg p-5 rounded-2xl border border-amber-500/40 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-amber-400 text-base flex items-center gap-2"><i class="fa-solid fa-store"></i> Check-in Loja Express (1 min)</h3>
+        <button onclick="closeModal('express')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold text-slate-300 block mb-1">1. Onde você está?</label>
+          <select id="expContexto" class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+            <option value="Loja - Caixa">Loja - Caixa</option>
+            <option value="Loja - Atendimento">Loja - Atendimento</option>
+            <option value="Rua / Entregas">Rua / Entregas</option>
+            <option value="Casa">Casa</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-300 block mb-1">2. Corpo agora (uma frase):</label>
+          <input type="text" id="expCorpo" placeholder="Ex: Pescoço rígido, tudo bem, fome..." class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-300 block mb-1">3. Hoje está mais pesado:</label>
+          <div class="grid grid-cols-2 gap-1.5">
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="pensar" class="accent-amber-500"> Pensar</label>
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="conversar" class="accent-amber-500"> Conversar</label>
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="decidir" class="accent-amber-500"> Decidir</label>
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="atender" class="accent-amber-500"> Atender</label>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-300 block mb-1">4. Maior gargalo agora:</label>
+          <input type="text" id="expGargalo" placeholder="Ex: Muito barulho, interrupções, fome..." class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+        </div>
+
+        <div>
+          <label class="font-bold text-amber-300 block mb-1">5. O que ajudaria nos próximos 20 min (Apenas UMA ação):</label>
+          <input type="text" id="expAcao" placeholder="Ex: Beber água, comer algo, algodão no ouvido..." class="bg-slate-900 border border-amber-500/50 rounded-lg p-2 w-full text-white font-bold">
+        </div>
+      </div>
+
+      <button onclick="salvarCheckinExpress()" class="w-full bg-amber-600 hover:bg-amber-500 font-bold text-white py-2.5 rounded-xl text-xs">Salvar & Ver Recomendação</button>
+    </div>
+  </div>
+
+  <!-- MODAL: CHECK-IN COMPLETO 2.0 (3 MINUTOS) -->
+  <div id="modalCompleto" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="card-dark w-full max-w-xl p-5 rounded-2xl border border-emerald-500/40 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-emerald-400 text-base flex items-center gap-2"><i class="fa-solid fa-heart-pulse"></i> Check-in Corporal Completo 2.0</h3>
+        <button onclick="closeModal('completo')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="font-bold text-emerald-300 block mb-1">🌱 1. Realidade do Corpo (Energia em uma frase)</label>
+          <input type="text" id="compCorpoFrase" placeholder="Ex: Acordei bem / Corpo pesado / Despertando..." class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-300 block mb-1">Sensorial - Algo está pesando?</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="bg-slate-900 px-3 py-1.5 rounded border border-slate-800 flex items-center gap-1.5"><input type="checkbox" name="compSensorial" value="barulho" class="accent-emerald-500"> Barulho</label>
+            <label class="bg-slate-900 px-3 py-1.5 rounded border border-slate-800 flex items-center gap-1.5"><input type="checkbox" name="compSensorial" value="luz" class="accent-emerald-500"> Luz</label>
+            <label class="bg-slate-900 px-3 py-1.5 rounded border border-slate-800 flex items-center gap-1.5"><input type="checkbox" name="compSensorial" value="pessoas" class="accent-emerald-500"> Pessoas</label>
+            <label class="bg-slate-900 px-3 py-1.5 rounded border border-slate-800 flex items-center gap-1.5"><input type="checkbox" name="compSensorial" value="temperatura" class="accent-emerald-500"> Temp.</label>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-emerald-300 block mb-1">⚙️ 2. Funcionamento (O que está mais pesado hoje?)</label>
+          <div class="grid grid-cols-2 gap-1.5">
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2"><input type="checkbox" name="compPesado" value="decidir" class="accent-emerald-500"> Decidir</label>
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2"><input type="checkbox" name="compPesado" value="conversar" class="accent-emerald-500"> Conversar</label>
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2"><input type="checkbox" name="compPesado" value="receber informação" class="accent-emerald-500"> Receber Informação</label>
+            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2"><input type="checkbox" name="compPesado" value="multitarefa" class="accent-emerald-500"> Multitarefa</label>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-emerald-300 block mb-1">💚 3. Regulação (Ação dos próximos 20 min)</label>
+          <input type="text" id="compAcao" placeholder="Ex: Comer / Silêncio / Mudar contexto..." class="bg-slate-900 border border-emerald-500/50 rounded-lg p-2 w-full text-white font-bold">
+        </div>
+
+        <div>
+          <label class="font-bold text-purple-300 block mb-1">🌿 5. Terapia com Rafael (Marcar interpretação?)</label>
+          <input type="text" id="compTerapiaFrase" placeholder="Se sim, escreva uma frase..." class="bg-slate-900 border border-purple-800 rounded-lg p-2 w-full text-slate-200 italic">
+        </div>
+      </div>
+
+      <button onclick="salvarCheckinCompleto()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold text-white py-2.5 rounded-xl text-xs">Salvar Check-in Completo</button>
+    </div>
+  </div>
+
+  <!-- MODAL: CAPTURA RÁPIDA (20 SEGUNDOS) -->
+  <div id="modalFast" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="card-dark w-full max-w-md p-5 rounded-2xl border border-slate-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+        <h3 class="font-bold text-white text-sm">⚡ Registro Rápido (20 seg)</h3>
+        <button onclick="closeModal('fast')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <input type="text" id="fastText" placeholder="O que aconteceu agora?" class="bg-slate-900 border border-slate-700 rounded-lg p-2.5 w-full text-xs text-white">
+
+      <button onclick="salvarFast()" class="w-full bg-slate-700 hover:bg-slate-600 font-bold text-white py-2 rounded-lg text-xs">Salvar Instantaneamente</button>
+    </div>
+  </div>
+
+  <script>
+    // ⚙️ FIREBASE CONFIG (Projeto 'projetoginecologista')
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXJY6q1FCtWF1XHl91r7zftITndKiD_uo",
+      authDomain: "projetoginecologista.firebaseapp.com",
+      databaseURL: "https://projetoginecologista-default-rtdb.firebaseio.com",
+      projectId: "projetoginecologista",
+      storageBucket: "projetoginecologista.firebasestorage.app",
+      messagingSenderId: "814407368688",
+      appId: "1:814407368688:web:948eef77a444684211a735",
+      measurementId: "G-VLLR72TTRJ"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const stateRef = db.ref('radar_funcionamento');
+
+    let radarData = {
+      registros: []
+    };
+
+    stateRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        radarData = data;
+        renderAll();
+      }
+    });
+
+    function saveData() { stateRef.set(radarData); }
+
+    function switchTab(tab) {
+      const tabs = ['agora', 'hoje', 'insights', 'relatorios'];
+      tabs.forEach(t => {
+        document.getElementById(`sec-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).classList.remove('tab-active');
+        document.getElementById(`tab-${t}`).classList.add('text-slate-400');
+      });
+      document.getElementById(`sec-${tab}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).classList.add('tab-active');
+    }
+
+    function openModal(id) {
+      document.getElementById(`modal${id.charAt(0).toUpperCase() + id.slice(1)}`).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(`modal${id.charAt(0).toUpperCase() + id.slice(1)}`).classList.add('hidden');
+    }
+
+    // SALVAR LOJA EXPRESS
+    function salvarCheckinExpress() {
+      const ctx = document.getElementById('expContexto').value;
+      const corpo = document.getElementById('expCorpo').value.trim() || 'Tudo bem';
+      const gargalo = document.getElementById('expGargalo').value.trim() || 'Sem gargalo relatado';
+      const acao = document.getElementById('expAcao').value.trim() || 'Respirar / Hidratar';
+
+      let pesados = [];
+      document.querySelectorAll('input[name="expPesado"]:checked').forEach(c => pesados.push(c.value));
+
+      const reg = {
+        id: Date.now(),
+        tipo: 'Express',
+        hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        contexto: ctx,
+        corpo: corpo,
+        pesado: pesados.join(', ') || 'Nenhum',
+        gargalo: gargalo,
+        acao: acao,
+        feedback: null
+      };
+
+      if(!radarData.registros) radarData.registros = [];
+      radarData.registros.push(reg);
+      saveData();
+      closeModal('express');
+    }
+
+    // SALVAR COMPLETO
+    function salvarCheckinCompleto() {
+      const corpo = document.getElementById('compCorpoFrase').value.trim() || 'Normal';
+      const acao = document.getElementById('compAcao').value.trim() || 'Pausa de 5 minutos';
+      const terapia = document.getElementById('compTerapiaFrase').value.trim();
+
+      let pesados = [];
+      document.querySelectorAll('input[name="compPesado"]:checked').forEach(c => pesados.push(c.value));
+
+      let sens = [];
+      document.querySelectorAll('input[name="compSensorial"]:checked').forEach(c => sens.push(c.value));
+
+      const reg = {
+        id: Date.now(),
+        tipo: 'Completo',
+        hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        contexto: 'Geral',
+        corpo: corpo,
+        pesado: pesados.join(', ') || 'Nenhum',
+        gargalo: sens.length ? `Sensorial (${sens.join(', ')})` : 'Nenhum',
+        acao: acao,
+        terapia: terapia,
+        feedback: null
+      };
+
+      if(!radarData.registros) radarData.registros = [];
+      radarData.registros.push(reg);
+      saveData();
+      closeModal('completo');
+    }
+
+    // SALVAR FAST 20S
+    function salvarFast() {
+      const txt = document.getElementById('fastText').value.trim();
+      if(txt) {
+        const reg = {
+          id: Date.now(),
+          tipo: 'Fast 20s',
+          hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+          contexto: 'Rápido',
+          corpo: txt,
+          pesado: '-',
+          gargalo: '-',
+          acao: 'Registrado',
+          feedback: null
+        };
+        if(!radarData.registros) radarData.registros = [];
+        radarData.registros.push(reg);
+        saveData();
+        closeModal('fast');
+      }
+    }
+
+    function renderAll() {
+      if(!radarData.registros || radarData.registros.length === 0) return;
+
+      const ultimo = radarData.registros[radarData.registros.length - 1];
+
+      // Atualiza Tela AGORA
+      document.getElementById('agoraDataHora').innerText = `Hoje às ${ultimo.hora}`;
+      document.getElementById('agoraTagContexto').innerText = ultimo.contexto;
+      document.getElementById('agoraCorpo').innerText = ultimo.corpo;
+      document.getElementById('agoraPesado').innerText = ultimo.pesado;
+      document.getElementById('agoraGargalo').innerText = ultimo.gargalo;
+      document.getElementById('agoraAcaoRecomendada').innerText = ultimo.acao;
+      document.getElementById('lastActionName').innerText = ultimo.acao;
+
+      // Renderiza Trajetória do Dia
+      const trajList = document.getElementById('trajetoriaList');
+      trajList.innerHTML = '';
+      radarData.registros.slice(-5).reverse().forEach(r => {
+        trajList.innerHTML += `
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-bold text-emerald-400">${r.hora}</span>
+                <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">${r.tipo} • ${r.contexto}</span>
+              </div>
+              <p class="text-slate-200"><strong>Corpo:</strong> ${r.corpo} | <strong>Pesado:</strong> ${r.pesado}</p>
+              <p class="text-emerald-300 mt-0.5"><strong>Ação escolhida:</strong> ${r.acao}</p>
+            </div>
+            ${r.feedback ? `<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-1 rounded-full font-bold">${r.feedback}</span>` : ''}
+          </div>`;
+      });
+    }
+
+    function confirmarAcao(status) {
+      if(radarData.registros && radarData.registros.length > 0) {
+        radarData.registros[radarData.registros.length - 1].feedback = status;
+        saveData();
+        document.getElementById('feedbackActionCard').classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
