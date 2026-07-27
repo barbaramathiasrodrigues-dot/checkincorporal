@@ -3,30 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radar de Funcionamento - Lóthlorien OS</title>
+  <title>Radar de Funcionamento - Lothlórien OS</title>
   
   <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Firebase SDKs (Compat v9) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <!-- Fontes Místicas / Élficas via Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700&family=MedievalSharp&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Firebase Compat SDKs (Versão 10.8.0 Seguro para Notion) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <style>
-    body { background-color: #0b1013; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
-    .card-lotr { background-color: #121a1f; border: 1px solid #23333d; }
-    .border-gold { border-color: #d4af37; }
-    .text-gold { color: #d4af37; }
-    .bg-gold { background-color: #d4af37; }
-    .tab-active { border-bottom: 2px solid #10b981; color: #34d399; font-weight: bold; }
+    :root {
+      --bg-pergaminho: #0d0a07;
+      --card-bg: rgba(23, 16, 11, 0.92);
+      --borda-dourada: #c5a059;
+      --borda-glow: rgba(197, 160, 89, 0.35);
+      --texto-primario: #e8d8c8;
+      --texto-dourado: #f0c987;
+      --verde-elfico: #81b29a;
+      --rosa-danca: #e07a5f;
+      --fonte-titulo: 'Cinzel Decorative', serif;
+      --fonte-sub: 'Cinzel', serif;
+      --fonte-corpo: 'Quicksand', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-pergaminho);
+      color: var(--texto-primario);
+      font-family: var(--fonte-corpo);
+    }
+
+    .card-lotr {
+      background: var(--card-bg);
+      border: 1px solid var(--borda-dourada);
+      box-shadow: 0 0 15px var(--borda-glow);
+      backdrop-filter: blur(8px);
+    }
+
+    .font-titulo { font-family: var(--fonte-titulo); }
+    .font-sub { font-family: var(--fonte-sub); }
+    .font-elfica { font-family: 'MedievalSharp', cursive; }
+
+    .border-gold { border-color: var(--borda-dourada); }
+    .text-gold { color: var(--texto-dourado); }
+    .bg-gold { background-color: var(--borda-dourada); }
+
+    .tab-active {
+      border-bottom: 2px solid var(--borda-dourada);
+      color: var(--texto-dourado);
+      font-weight: bold;
+      text-shadow: 0 0 8px rgba(240, 201, 135, 0.4);
+    }
+
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
     @media print {
       body { background-color: white !important; color: black !important; }
       .no-print { display: none !important; }
-      .card-lotr { background-color: white !important; border: 1px solid #ccc !important; color: black !important; }
+      .card-lotr { background-color: white !important; border: 1px solid #ccc !important; color: black !important; box-shadow: none !important; }
       .print-black { color: black !important; }
     }
   </style>
@@ -34,43 +75,43 @@
 <body class="p-3 md:p-6 max-w-5xl mx-auto">
 
   <!-- HEADER RADAR DE FUNCIONAMENTO (O CONSELHO) -->
-  <header class="card-lotr rounded-2xl p-5 mb-6 shadow-2xl relative overflow-hidden border-l-4 border-l-emerald-500 no-print">
+  <header class="card-lotr rounded-2xl p-5 mb-6 shadow-2xl relative overflow-hidden border-l-4 border-l-[#c5a059] no-print">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <div class="flex items-center gap-2">
-          <span class="text-xs font-semibold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800/60">
+          <span class="text-xs font-semibold uppercase tracking-widest text-[#f0c987] bg-black/60 px-2.5 py-1 rounded-full border border-[#c5a059]/50 font-sub">
             🌿 Radar de Funcionamento
           </span>
-          <span class="text-xs text-amber-300 bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-800/50">
-            📜 Lóthlorien OS
+          <span class="text-xs text-[#81b29a] bg-black/60 px-2.5 py-1 rounded-full border border-[#81b29a]/40 font-sub">
+            📜 Lothlórien OS
           </span>
         </div>
-        <h1 class="text-xl md:text-2xl font-bold mt-2 text-slate-100 flex items-center gap-2">
+        <h1 class="text-xl md:text-2xl font-bold mt-2 text-[#f0c987] flex items-center gap-2 font-titulo tracking-wide">
           Perceber Cedo ➔ Agir Rápido ➔ Proteger a Energia
         </h1>
-        <p class="text-xs md:text-sm text-slate-400 mt-1">"A regulação do corpo é a primeira fortaleza antes de qualquer batalha."</p>
+        <p class="text-xs md:text-sm text-[#e8d8c8]/80 mt-1 font-elfica">"A regulação do corpo é a primeira fortaleza antes de qualquer batalha."</p>
       </div>
 
       <!-- BOTÕES DE CHECK-IN RÁPIDO -->
       <div class="flex flex-wrap gap-2 w-full md:w-auto">
-        <button onclick="openModal('completo')" class="flex-1 md:flex-none bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
+        <button onclick="openModal('completo')" class="flex-1 md:flex-none bg-gradient-to-r from-[#c5a059] to-[#81b29a] hover:brightness-110 text-[#0d0a07] font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg transition font-sub">
           <i class="fa-solid fa-leaf"></i> Check-in Completo (3m)
         </button>
-        <button onclick="openModal('express')" class="flex-1 md:flex-none bg-amber-700 hover:bg-amber-600 text-white font-bold text-xs px-3 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-lg transition">
+        <button onclick="openModal('express')" class="flex-1 md:flex-none bg-black/60 hover:bg-black/80 text-[#f0c987] border border-[#c5a059] font-bold text-xs px-3 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-lg transition font-sub">
           <i class="fa-solid fa-store"></i> Loja Express (1m)
         </button>
-        <button onclick="openModal('fast')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs px-3 py-2.5 rounded-xl border border-slate-700 transition">
+        <button onclick="openModal('fast')" class="bg-black/40 hover:bg-black/70 text-[#e8d8c8] font-bold text-xs px-3 py-2.5 rounded-xl border border-[#c5a059]/40 transition font-sub">
           ⚡ 20s
         </button>
       </div>
     </div>
 
     <!-- NAVEGAÇÃO POR ABAS -->
-    <nav class="flex gap-4 border-b border-slate-800 mt-6 text-sm overflow-x-auto no-scrollbar">
+    <nav class="flex gap-4 border-b border-[#c5a059]/30 mt-6 text-sm overflow-x-auto no-scrollbar font-sub">
       <button onclick="switchTab('agora')" id="tab-agora" class="pb-2 px-1 tab-active whitespace-nowrap"><i class="fa-solid fa-compass mr-1"></i> Bússola Agora</button>
-      <button onclick="switchTab('hoje')" id="tab-hoje" class="pb-2 px-1 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-shield-halved mr-1"></i> Trajetória do Dia</button>
-      <button onclick="switchTab('insights')" id="tab-insights" class="pb-2 px-1 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-feather-pointed mr-1"></i> Padrões & Sabedoria</button>
-      <button onclick="switchTab('relatorios')" id="tab-relatorios" class="pb-2 px-1 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-scroll mr-1"></i> Pergaminho de Terapia / PDF</button>
+      <button onclick="switchTab('hoje')" id="tab-hoje" class="pb-2 px-1 text-[#e8d8c8]/60 whitespace-nowrap"><i class="fa-solid fa-shield-halved mr-1"></i> Trajetória do Dia</button>
+      <button onclick="switchTab('insights')" id="tab-insights" class="pb-2 px-1 text-[#e8d8c8]/60 whitespace-nowrap"><i class="fa-solid fa-feather-pointed mr-1"></i> Padrões & Sabedoria</button>
+      <button onclick="switchTab('relatorios')" id="tab-relatorios" class="pb-2 px-1 text-[#e8d8c8]/60 whitespace-nowrap"><i class="fa-solid fa-scroll mr-1"></i> Pergaminho de Terapia / PDF</button>
     </nav>
   </header>
 
@@ -81,59 +122,59 @@
     <section id="sec-agora" class="space-y-4">
       
       <!-- CARD DE FEEDBACK DA ÚLTIMA AÇÃO -->
-      <div id="feedbackActionCard" class="card-lotr p-4 rounded-xl border border-amber-500/40 bg-amber-950/20 flex flex-col md:flex-row justify-between items-center gap-3">
+      <div id="feedbackActionCard" class="card-lotr p-4 rounded-xl border border-[#c5a059]/50 bg-black/30 flex flex-col md:flex-row justify-between items-center gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 text-lg">
+          <div class="w-10 h-10 rounded-full bg-[#c5a059]/20 flex items-center justify-center text-[#f0c987] shrink-0 text-lg border border-[#c5a059]/40">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
           </div>
           <div>
-            <div class="text-[10px] font-bold text-amber-300 uppercase tracking-wider">Ação em Andamento</div>
-            <p class="text-xs md:text-sm text-slate-200">Sua última orientação foi: <strong id="lastActionName" class="text-amber-300">Aguardando check-in</strong>. Isso ajudou o seu sistema?</p>
+            <div class="text-[10px] font-bold text-[#f0c987] uppercase tracking-wider font-sub">Ação em Andamento</div>
+            <p class="text-xs md:text-sm text-[#e8d8c8]">Sua última orientação foi: <strong id="lastActionName" class="text-[#f0c987]">Aguardando check-in</strong>. Isso ajudou o seu sistema?</p>
           </div>
         </div>
-        <div class="flex gap-2 w-full md:w-auto shrink-0">
-          <button onclick="confirmarAcao('Ajudou Muito')" class="flex-1 md:flex-none text-xs bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3 py-2 rounded-lg">✔ Ajudou</button>
-          <button onclick="confirmarAcao('Parcialmente')" class="flex-1 md:flex-none text-xs bg-amber-700 hover:bg-amber-600 text-white font-bold px-3 py-2 rounded-lg">◑ Parcial</button>
-          <button onclick="confirmarAcao('Não Ajudou')" class="flex-1 md:flex-none text-xs bg-rose-700 hover:bg-rose-600 text-white font-bold px-3 py-2 rounded-lg">✖ Não Ajudou</button>
+        <div class="flex gap-2 w-full md:w-auto shrink-0 font-sub">
+          <button onclick="confirmarAcao('Ajudou Muito')" class="flex-1 md:flex-none text-xs bg-[#81b29a] hover:brightness-110 text-[#0d0a07] font-bold px-3 py-2 rounded-lg">✔ Ajudou</button>
+          <button onclick="confirmarAcao('Parcialmente')" class="flex-1 md:flex-none text-xs bg-[#c5a059] hover:brightness-110 text-[#0d0a07] font-bold px-3 py-2 rounded-lg">◑ Parcial</button>
+          <button onclick="confirmarAcao('Não Ajudou')" class="flex-1 md:flex-none text-xs bg-[#e07a5f] hover:brightness-110 text-white font-bold px-3 py-2 rounded-lg">✖ Não Ajudou</button>
         </div>
       </div>
 
       <!-- ÚLTIMA LEITURA DE FUNCIONAMENTO -->
-      <div class="card-lotr p-5 rounded-2xl border-t-4 border-t-emerald-500 bg-gradient-to-b from-emerald-950/30 to-slate-900">
+      <div class="card-lotr p-5 rounded-2xl border-t-4 border-t-[#c5a059] bg-gradient-to-b from-black/60 to-transparent">
         <div class="flex justify-between items-start mb-4">
           <div>
-            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2.5 py-0.5 rounded border border-emerald-800 uppercase tracking-wider">Estado do Momento</span>
-            <h2 class="text-lg font-bold text-white mt-1" id="agoraDataHora">Nenhum registro hoje</h2>
+            <span class="text-[10px] font-bold text-[#f0c987] bg-black/60 px-2.5 py-0.5 rounded border border-[#c5a059]/40 uppercase tracking-wider font-sub">Estado do Momento</span>
+            <h2 class="text-lg font-bold text-[#f0c987] mt-1 font-titulo" id="agoraDataHora">Nenhum registro hoje</h2>
           </div>
-          <span id="agoraTagContexto" class="text-xs font-bold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">📍 Contexto: --</span>
+          <span id="agoraTagContexto" class="text-xs font-bold text-[#e8d8c8] bg-black/60 px-3 py-1 rounded-full border border-[#c5a059]/30 font-sub">📍 Contexto: --</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs mb-5">
-          <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
-            <div class="text-slate-400 font-bold mb-1">🔋 Bateria / Energia</div>
-            <p class="text-emerald-300 font-bold text-sm" id="agoraBateria">--</p>
+          <div class="p-3 bg-black/50 rounded-xl border border-[#c5a059]/30">
+            <div class="text-[#f0c987] font-bold mb-1 font-sub">🔋 Bateria / Energia</div>
+            <p class="text-[#81b29a] font-bold text-sm" id="agoraBateria">--</p>
           </div>
-          <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
-            <div class="text-slate-400 font-bold mb-1">🧘 Tensão & Sensorial</div>
-            <p class="text-slate-200" id="agoraCorpo">Nenhum dado.</p>
+          <div class="p-3 bg-black/50 rounded-xl border border-[#c5a059]/30">
+            <div class="text-[#f0c987] font-bold mb-1 font-sub">🧘 Tensão & Sensorial</div>
+            <p class="text-[#e8d8c8]" id="agoraCorpo">Nenhum dado.</p>
           </div>
-          <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
-            <div class="text-slate-400 font-bold mb-1">⚙️ Sobrecarga Cognitiva</div>
-            <p class="text-slate-200" id="agoraPesado">Nenhum dado.</p>
+          <div class="p-3 bg-black/50 rounded-xl border border-[#c5a059]/30">
+            <div class="text-[#f0c987] font-bold mb-1 font-sub">⚙️ Sobrecarga Cognitiva</div>
+            <p class="text-[#e8d8c8]" id="agoraPesado">Nenhum dado.</p>
           </div>
-          <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
-            <div class="text-slate-400 font-bold mb-1">🚧 Gargalo Atual</div>
-            <p class="text-rose-300 font-semibold" id="agoraGargalo">Nenhum dado.</p>
+          <div class="p-3 bg-black/50 rounded-xl border border-[#c5a059]/30">
+            <div class="text-[#f0c987] font-bold mb-1 font-sub">🚧 Gargalo Atual</div>
+            <p class="text-[#e07a5f] font-semibold" id="agoraGargalo">Nenhum dado.</p>
           </div>
         </div>
 
         <!-- AÇÃO DE MÁXIMA PRIORIDADE -->
-        <div class="p-4 bg-emerald-950/50 rounded-xl border border-emerald-700/60 flex items-center justify-between">
+        <div class="p-4 bg-black/60 rounded-xl border border-[#c5a059]/60 flex items-center justify-between">
           <div>
-            <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Orientação Única para os Próximos 20 Minutos</div>
-            <div class="text-base font-bold text-emerald-100 mt-0.5" id="agoraAcaoRecomendada">Faça um Check-in para recalibrar o seu sistema.</div>
+            <div class="text-[10px] font-bold text-[#f0c987] uppercase tracking-wider font-sub">Orientação Única para os Próximos 20 Minutos</div>
+            <div class="text-base font-bold text-[#e8d8c8] mt-0.5 font-elfica" id="agoraAcaoRecomendada">Faça um Check-in para recalibrar o seu sistema.</div>
           </div>
-          <i class="fa-solid fa-compass text-3xl text-emerald-400 opacity-80"></i>
+          <i class="fa-solid fa-compass text-3xl text-[#c5a059] opacity-80"></i>
         </div>
       </div>
     </section>
@@ -141,36 +182,36 @@
     <!-- 🗓️ TELA 2: TRAJETÓRIA DO DIA -->
     <section id="sec-hoje" class="hidden space-y-4">
       <div class="card-lotr p-5 rounded-2xl">
-        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-emerald-400"></i> Trajetória do Dia (Registros Conectados)
+        <h2 class="text-lg font-bold text-[#f0c987] mb-4 flex items-center gap-2 font-titulo">
+          <i class="fa-solid fa-shield-halved text-[#c5a059]"></i> Trajetória do Dia (Registros Conectados)
         </h2>
         <div id="trajetoriaList" class="space-y-3">
-          <p class="text-xs text-slate-500 italic">Buscando anais do dia...</p>
+          <p class="text-xs text-[#e8d8c8]/50 italic font-elfica">Buscando anais do dia no Arquivo Central...</p>
         </div>
       </div>
     </section>
 
     <!-- 📊 TELA 3: PADRÕES & SABEDORIA -->
     <section id="sec-insights" class="hidden space-y-4">
-      <div class="card-lotr p-5 rounded-2xl border border-emerald-500/30">
-        <h2 class="text-lg font-bold text-emerald-400 mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-feather-pointed"></i> Observações & Padrões Recorrentes
+      <div class="card-lotr p-5 rounded-2xl border border-[#c5a059]/40">
+        <h2 class="text-lg font-bold text-[#f0c987] mb-2 flex items-center gap-2 font-titulo">
+          <i class="fa-solid fa-feather-pointed text-[#c5a059]"></i> Observações & Padrões Recorrentes
         </h2>
-        <p class="text-xs text-slate-400 mb-4">Mapeamento contínuo para evitar sobrecarga e apoiar suas decisões.</p>
+        <p class="text-xs text-[#e8d8c8]/70 mb-4 font-elfica">Mapeamento contínuo para evitar sobrecarga e apoiar suas decisões.</p>
         
         <div class="space-y-3 text-xs">
-          <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 flex items-start gap-3">
-            <i class="fa-solid fa-volume-xmark text-rose-400 text-lg mt-0.5"></i>
+          <div class="p-4 bg-black/40 rounded-xl border border-[#c5a059]/20 flex items-start gap-3">
+            <i class="fa-solid fa-volume-xmark text-[#e07a5f] text-lg mt-0.5"></i>
             <div>
-              <div class="font-bold text-slate-200">Gargalo Sensorial na Loja</div>
-              <p class="text-slate-400 mt-1">Ambientes barulhentos aumentam o custo cognitivo para conversas e atendimento. Usar regulação auditiva preventiva antes dos picos reduz a fadiga.</p>
+              <div class="font-bold text-[#f0c987] font-sub">Gargalo Sensorial na Loja</div>
+              <p class="text-[#e8d8c8]/80 mt-1">Ambientes barulhentos aumentam o custo cognitivo para conversas e atendimento. Usar regulação auditiva preventiva antes dos picos reduz a fadiga.</p>
             </div>
           </div>
-          <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 flex items-start gap-3">
-            <i class="fa-solid fa-apple-whole text-emerald-400 text-lg mt-0.5"></i>
+          <div class="p-4 bg-black/40 rounded-xl border border-[#c5a059]/20 flex items-start gap-3">
+            <i class="fa-solid fa-apple-whole text-[#81b29a] text-lg mt-0.5"></i>
             <div>
-              <div class="font-bold text-slate-200">Sinal Biológico de Fome</div>
-              <p class="text-slate-400 mt-1">Gargalos executivos em momentos de transição costumam coincidir com pausa alimentar pendente. Tratar alimentação como manutenção básica melhora a clareza.</p>
+              <div class="font-bold text-[#f0c987] font-sub">Sinal Biológico de Fome</div>
+              <p class="text-[#e8d8c8]/80 mt-1">Gargalos executivos em momentos de transição costumam coincidir com pausa alimentar pendente. Tratar alimentação como manutenção básica melhora a clareza.</p>
             </div>
           </div>
         </div>
@@ -182,44 +223,44 @@
       <div class="card-lotr p-5 rounded-2xl">
         <div class="flex justify-between items-center mb-4 no-print">
           <div>
-            <h2 class="text-lg font-bold text-white"><i class="fa-solid fa-scroll text-emerald-400 mr-1.5"></i> Pergaminho de Terapia & Saúde</h2>
-            <p class="text-xs text-slate-400">Resumo estruturado pronto para impressão ou exportação em PDF (Sessão com Rafael / Médicos).</p>
+            <h2 class="text-lg font-bold text-[#f0c987] font-titulo"><i class="fa-solid fa-scroll text-[#c5a059] mr-1.5"></i> Pergaminho de Terapia & Saúde</h2>
+            <p class="text-xs text-[#e8d8c8]/70 font-elfica">Resumo estruturado pronto para impressão ou exportação em PDF (Sessão com Rafael / Médicos).</p>
           </div>
-          <button onclick="window.print()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-lg transition">
+          <button onclick="window.print()" class="bg-[#c5a059] hover:brightness-110 text-[#0d0a07] font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-lg transition font-sub">
             <i class="fa-solid fa-print"></i> Gerar PDF / Imprimir
           </button>
         </div>
 
         <!-- PERGAMINHO LIMPO DE IMPRESSÃO -->
-        <div class="p-6 bg-slate-50 text-slate-900 rounded-xl border border-slate-300 space-y-5 text-xs font-sans print-black">
-          <div class="border-b pb-4 flex justify-between items-center border-slate-300">
+        <div class="p-6 bg-[#fdfbf7] text-[#0d0a07] rounded-xl border border-[#c5a059] space-y-5 text-xs font-sans print-black shadow-inner">
+          <div class="border-b border-[#c5a059]/40 pb-4 flex justify-between items-center">
             <div>
-              <h1 class="text-xl font-bold text-slate-900">Relatório de Funcionamento & Saúde — Bárbara</h1>
-              <p class="text-slate-600 mt-0.5">Ecossistema NeuroOrganizer • Lóthlorien OS</p>
+              <h1 class="text-xl font-bold text-[#0d0a07] font-titulo">Relatório de Funcionamento & Saúde — Bárbara</h1>
+              <p class="text-[#0d0a07]/70 mt-0.5 font-elfica">Ecossistema NeuroOrganizer • Lothlórien OS</p>
             </div>
-            <div class="text-right text-slate-600 text-[11px]">
+            <div class="text-right text-[#0d0a07]/70 text-[11px] font-sub">
               <div>Data: <strong id="relatorioDataHoje">--/--/----</strong></div>
               <div>Origem: Registros do Radar</div>
             </div>
           </div>
 
           <div>
-            <h3 class="font-bold uppercase text-slate-800 text-[11px] mb-2 border-b pb-1 border-slate-200">1. Pautas Mapeadas para Terapia (Rafael)</h3>
-            <ul id="relatorioTerapiaList" class="list-disc pl-5 space-y-1 text-slate-800 text-xs">
-              <li class="italic text-slate-500">Nenhuma pauta específica inserida nos últimos check-ins.</li>
+            <h3 class="font-bold uppercase text-[#0d0a07] text-[11px] mb-2 border-b pb-1 border-[#c5a059]/30 font-sub">1. Pautas Mapeadas para Terapia (Rafael)</h3>
+            <ul id="relatorioTerapiaList" class="list-disc pl-5 space-y-1 text-[#0d0a07] text-xs">
+              <li class="italic text-[#0d0a07]/60">Nenhuma pauta específica inserida nos últimos check-ins.</li>
             </ul>
           </div>
 
           <div>
-            <h3 class="font-bold uppercase text-slate-800 text-[11px] mb-2 border-b pb-1 border-slate-200">2. Padrões de Sensibilidade & Carga Física</h3>
-            <div id="relatorioFisicoList" class="text-slate-800 space-y-1">
-              <p class="italic text-slate-500">Sem registros suficientes no período.</p>
+            <h3 class="font-bold uppercase text-[#0d0a07] text-[11px] mb-2 border-b pb-1 border-[#c5a059]/30 font-sub">2. Padrões de Sensibilidade & Carga Física</h3>
+            <div id="relatorioFisicoList" class="text-[#0d0a07] space-y-1">
+              <p class="italic text-[#0d0a07]/60">Sem registros suficientes no período.</p>
             </div>
           </div>
 
           <div>
-            <h3 class="font-bold uppercase text-slate-800 text-[11px] mb-2 border-b pb-1 border-slate-200">3. Histórico Recente de Entradas</h3>
-            <div id="relatorioHistoricoTabela" class="space-y-1 text-[11px] text-slate-700">
+            <h3 class="font-bold uppercase text-[#0d0a07] text-[11px] mb-2 border-b pb-1 border-[#c5a059]/30 font-sub">3. Histórico Recente de Entradas</h3>
+            <div id="relatorioHistoricoTabela" class="space-y-1 text-[11px] text-[#0d0a07]">
               <!-- Histórico formatado para impressão -->
             </div>
           </div>
@@ -229,14 +270,14 @@
 
   </main>
 
-  <!-- MODAL: CHECK-IN COMPLETO 2.0 (EXPANDIDO / NOTION PROTOCOL) -->
-  <div id="modalCompleto" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 md:p-4">
-    <div class="card-lotr w-full max-w-2xl p-5 md:p-6 rounded-2xl border border-emerald-500/40 space-y-4 max-h-[92vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-emerald-400 text-base flex items-center gap-2">
-          <i class="fa-solid fa-leaf"></i> Check-in Corporal Completo
+  <!-- MODAL: CHECK-IN COMPLETO 2.0 -->
+  <div id="modalCompleto" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 md:p-4">
+    <div class="card-lotr w-full max-w-2xl p-5 md:p-6 rounded-2xl border border-[#c5a059] space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-[#c5a059]/30 pb-3">
+        <h3 class="font-bold text-[#f0c987] text-base flex items-center gap-2 font-titulo">
+          <i class="fa-solid fa-leaf text-[#81b29a]"></i> Check-in Corporal Completo
         </h3>
-        <button onclick="closeModal('completo')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <button onclick="closeModal('completo')" class="text-[#e8d8c8]/50 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
 
       <div class="space-y-4 text-xs">
@@ -244,8 +285,8 @@
         <!-- Contexto & Bateria -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label class="font-bold text-slate-300 block mb-1">1. Onde você está agora?</label>
-            <select id="compContexto" class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+            <label class="font-bold text-[#f0c987] block mb-1 font-sub">1. Onde você está agora?</label>
+            <select id="compContexto" class="bg-black/60 border border-[#c5a059]/40 rounded-lg p-2 w-full text-[#e8d8c8]">
               <option value="🏠 Casa">🏠 Casa</option>
               <option value="🏪 Loja - Operação">🏪 Loja - Operação</option>
               <option value="🚗 Deslocamento / Rua">🚗 Deslocamento / Rua</option>
@@ -253,8 +294,8 @@
             </select>
           </div>
           <div>
-            <label class="font-bold text-emerald-300 block mb-1">2. Nível de Bateria / Energia</label>
-            <select id="compBateria" class="bg-slate-900 border border-emerald-600/50 rounded-lg p-2 w-full text-emerald-300 font-bold">
+            <label class="font-bold text-[#81b29a] block mb-1 font-sub">2. Nível de Bateria / Energia</label>
+            <select id="compBateria" class="bg-black/60 border border-[#81b29a]/50 rounded-lg p-2 w-full text-[#81b29a] font-bold">
               <option value="🟢 Regulado / Flutuando bem">🟢 Regulado / Flutuando bem</option>
               <option value="🟡 Amarelo / Atenção Necessária">🟡 Amarelo / Atenção Necessária</option>
               <option value="🔴 Sobrecarga / Bateria Baixa">🔴 Sobrecarga / Bateria Baixa</option>
@@ -264,70 +305,70 @@
 
         <!-- Mapeamento do Corpo / Tensão -->
         <div>
-          <label class="font-bold text-slate-300 block mb-1">3. Tensão Física Detectada:</label>
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">3. Tensão Física Detectada:</label>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5">
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="cervical/ombros" class="accent-emerald-500"> Cervical / Ombros</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="mandibula" class="accent-emerald-500"> Mandíbula / Rosto</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="cabeca/olhos" class="accent-emerald-500"> Cabeça / Olhos</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="estomago/enjoo" class="accent-emerald-500"> Estômago / Enjoo</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="respiracao curta" class="accent-emerald-500"> Respiração Curta</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="sem tensao" class="accent-emerald-500"> Sem Tensão Relevante</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="cervical/ombros" class="accent-[#c5a059]"> Cervical / Ombros</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="mandibula" class="accent-[#c5a059]"> Mandíbula / Rosto</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="cabeca/olhos" class="accent-[#c5a059]"> Cabeça / Olhos</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="estomago/enjoo" class="accent-[#c5a059]"> Estômago / Enjoo</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="respiracao curta" class="accent-[#c5a059]"> Respiração Curta</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compTensao" value="sem tensao" class="accent-[#c5a059]"> Sem Tensão Relevante</label>
           </div>
         </div>
 
         <!-- Carga Sensorial -->
         <div>
-          <label class="font-bold text-slate-300 block mb-1">4. Sensorial (Algo pesando no ambiente?):</label>
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">4. Sensorial (Algo pesando no ambiente?):</label>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-1.5">
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="barulho/sons" class="accent-emerald-500"> Barulho / Sons</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="luz forte" class="accent-emerald-500"> Luz / Brilho</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="interrupcoes" class="accent-emerald-500"> Interrupções</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="fome/sede" class="accent-emerald-500"> Fome / Sede</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="barulho/sons" class="accent-[#c5a059]"> Barulho / Sons</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="luz forte" class="accent-[#c5a059]"> Luz / Brilho</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="interrupcoes" class="accent-[#c5a059]"> Interrupções</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compSensorial" value="fome/sede" class="accent-[#c5a059]"> Fome / Sede</label>
           </div>
         </div>
 
         <!-- Carga Cognitiva -->
         <div>
-          <label class="font-bold text-emerald-300 block mb-1">5. Carga Cognitiva / Executiva (O que está mais pesado?)</label>
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">5. Carga Cognitiva / Executiva (O que está mais pesado?)</label>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-1.5">
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="decidir" class="accent-emerald-500"> Decidir</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="conversar" class="accent-emerald-500"> Conversar</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="iniciar tarefa" class="accent-emerald-500"> Iniciar Tarefa</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="sustentar foco" class="accent-emerald-500"> Sustentar Foco</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="decidir" class="accent-[#c5a059]"> Decidir</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="conversar" class="accent-[#c5a059]"> Conversar</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="iniciar tarefa" class="accent-[#c5a059]"> Iniciar Tarefa</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="compPesado" value="sustentar foco" class="accent-[#c5a059]"> Sustentar Foco</label>
           </div>
         </div>
 
         <!-- Ação Recomendada -->
         <div>
-          <label class="font-bold text-emerald-300 block mb-1">6. Ação Recomendada para os próximos 20 min (Apenas UMA):</label>
-          <input type="text" id="compAcao" placeholder="Ex: Pausa de 5 min / Água / Abafador / Mudar contexto..." class="bg-slate-900 border border-emerald-500/60 rounded-lg p-2.5 w-full text-white font-bold">
+          <label class="font-bold text-[#81b29a] block mb-1 font-sub">6. Ação Recomendada para os próximos 20 min (Apenas UMA):</label>
+          <input type="text" id="compAcao" placeholder="Ex: Pausa de 5 min / Água / Abafador / Mudar contexto..." class="bg-black/60 border border-[#81b29a]/60 rounded-lg p-2.5 w-full text-[#e8d8c8] font-bold">
         </div>
 
         <!-- Pauta Terapia -->
         <div>
-          <label class="font-bold text-purple-300 block mb-1">🌿 7. Anotar para Terapia com Rafael (Opcional):</label>
-          <input type="text" id="compTerapiaFrase" placeholder="Ex: Percebi um padrão de culpa ao parar para descansar..." class="bg-slate-900 border border-purple-800/80 rounded-lg p-2.5 w-full text-slate-200 italic">
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">🌿 7. Anotar para Terapia com Rafael (Opcional):</label>
+          <input type="text" id="compTerapiaFrase" placeholder="Ex: Percebi um padrão de culpa ao parar para descansar..." class="bg-black/60 border border-[#c5a059]/40 rounded-lg p-2.5 w-full text-[#e8d8c8] italic">
         </div>
       </div>
 
-      <button onclick="salvarCheckinCompleto()" class="w-full bg-emerald-700 hover:bg-emerald-600 font-bold text-white py-3 rounded-xl text-xs transition shadow-lg">
+      <button onclick="salvarCheckinCompleto()" class="w-full bg-gradient-to-r from-[#c5a059] to-[#81b29a] hover:brightness-110 font-bold text-[#0d0a07] py-3 rounded-xl text-xs transition shadow-lg font-sub">
         Salvar Check-in Completo & Atualizar Bússola
       </button>
     </div>
   </div>
 
   <!-- MODAL: CHECK-IN LOJA EXPRESS -->
-  <div id="modalExpress" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="card-lotr w-full max-w-lg p-5 rounded-2xl border border-amber-500/40 space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-amber-400 text-base flex items-center gap-2"><i class="fa-solid fa-store"></i> Check-in Loja Express (1 min)</h3>
-        <button onclick="closeModal('express')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <div id="modalExpress" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="card-lotr w-full max-w-lg p-5 rounded-2xl border border-[#c5a059] space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-[#c5a059]/30 pb-3">
+        <h3 class="font-bold text-[#f0c987] text-base flex items-center gap-2 font-titulo"><i class="fa-solid fa-store text-[#c5a059]"></i> Check-in Loja Express (1 min)</h3>
+        <button onclick="closeModal('express')" class="text-[#e8d8c8]/50 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="font-bold text-slate-300 block mb-1">1. Onde você está?</label>
-          <select id="expContexto" class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">1. Onde você está?</label>
+          <select id="expContexto" class="bg-black/60 border border-[#c5a059]/40 rounded-lg p-2 w-full text-[#e8d8c8]">
             <option value="Loja - Caixa">Loja - Caixa</option>
             <option value="Loja - Atendimento">Loja - Atendimento</option>
             <option value="Rua / Entregas">Rua / Entregas</option>
@@ -336,84 +377,94 @@
         </div>
 
         <div>
-          <label class="font-bold text-slate-300 block mb-1">2. Corpo agora (uma frase):</label>
-          <input type="text" id="expCorpo" placeholder="Ex: Cervical rígida, fome, tudo bem..." class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">2. Corpo agora (uma frase):</label>
+          <input type="text" id="expCorpo" placeholder="Ex: Cervical rígida, fome, tudo bem..." class="bg-black/60 border border-[#c5a059]/40 rounded-lg p-2 w-full text-[#e8d8c8]">
         </div>
 
         <div>
-          <label class="font-bold text-slate-300 block mb-1">3. Hoje está mais pesado:</label>
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">3. Hoje está mais pesado:</label>
           <div class="grid grid-cols-2 gap-1.5">
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="pensar" class="accent-amber-500"> Pensar</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="conversar" class="accent-amber-500"> Conversar</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="decidir" class="accent-amber-500"> Decidir</label>
-            <label class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="atender" class="accent-amber-500"> Atender</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="pensar" class="accent-[#c5a059]"> Pensar</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="conversar" class="accent-[#c5a059]"> Conversar</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="decidir" class="accent-[#c5a059]"> Decidir</label>
+            <label class="bg-black/40 p-2 rounded border border-[#c5a059]/30 flex items-center gap-2 cursor-pointer"><input type="checkbox" name="expPesado" value="atender" class="accent-[#c5a059]"> Atender</label>
           </div>
         </div>
 
         <div>
-          <label class="font-bold text-slate-300 block mb-1">4. Maior gargalo agora:</label>
-          <input type="text" id="expGargalo" placeholder="Ex: Muito barulho, interrupções, fome..." class="bg-slate-900 border border-slate-700 rounded-lg p-2 w-full text-white">
+          <label class="font-bold text-[#f0c987] block mb-1 font-sub">4. Maior gargalo agora:</label>
+          <input type="text" id="expGargalo" placeholder="Ex: Muito barulho, interrupções, fome..." class="bg-black/60 border border-[#c5a059]/40 rounded-lg p-2 w-full text-[#e8d8c8]">
         </div>
 
         <div>
-          <label class="font-bold text-amber-300 block mb-1">5. O que ajudaria nos próximos 20 min (Apenas UMA ação):</label>
-          <input type="text" id="expAcao" placeholder="Ex: Beber água, comer algo, algodão no ouvido..." class="bg-slate-900 border border-amber-500/50 rounded-lg p-2 w-full text-white font-bold">
+          <label class="font-bold text-[#81b29a] block mb-1 font-sub">5. O que ajudaria nos próximos 20 min (Apenas UMA ação):</label>
+          <input type="text" id="expAcao" placeholder="Ex: Beber água, comer algo, algodão no ouvido..." class="bg-black/60 border border-[#81b29a]/50 rounded-lg p-2 w-full text-[#e8d8c8] font-bold">
         </div>
       </div>
 
-      <button onclick="salvarCheckinExpress()" class="w-full bg-amber-700 hover:bg-amber-600 font-bold text-white py-2.5 rounded-xl text-xs transition">Salvar & Ver Recomendação</button>
+      <button onclick="salvarCheckinExpress()" class="w-full bg-[#c5a059] hover:brightness-110 font-bold text-[#0d0a07] py-2.5 rounded-xl text-xs transition font-sub">Salvar & Ver Recomendação</button>
     </div>
   </div>
 
   <!-- MODAL: REGISTRO RÁPIDO 20s -->
-  <div id="modalFast" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="card-lotr w-full max-w-md p-5 rounded-2xl border border-slate-700 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-        <h3 class="font-bold text-white text-sm">⚡ Captura Rápida (20s)</h3>
-        <button onclick="closeModal('fast')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+  <div id="modalFast" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="card-lotr w-full max-w-md p-5 rounded-2xl border border-[#c5a059] space-y-4">
+      <div class="flex justify-between items-center border-b border-[#c5a059]/30 pb-2">
+        <h3 class="font-bold text-[#f0c987] text-sm font-titulo">⚡ Captura Rápida (20s)</h3>
+        <button onclick="closeModal('fast')" class="text-[#e8d8c8]/50 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <input type="text" id="fastText" placeholder="O que aconteceu ou o que o corpo sentiu agora?" class="bg-slate-900 border border-slate-700 rounded-lg p-3 w-full text-xs text-white">
+      <input type="text" id="fastText" placeholder="O que aconteceu ou o que o corpo sentiu agora?" class="bg-black/60 border border-[#c5a059]/40 rounded-lg p-3 w-full text-xs text-[#e8d8c8]">
 
-      <button onclick="salvarFast()" class="w-full bg-slate-700 hover:bg-slate-600 font-bold text-white py-2.5 rounded-xl text-xs transition">Salvar Instantaneamente</button>
+      <button onclick="salvarFast()" class="w-full bg-[#c5a059] hover:brightness-110 font-bold text-[#0d0a07] py-2.5 rounded-xl text-xs transition font-sub">Salvar Instantaneamente</button>
     </div>
   </div>
 
   <script>
-    // FIREBASE CONFIG
+    // NOVO FIREBASE CONFIG EXCLUSIVO DO MOTOR CENTRAL (planejamentos-83b23)
     const firebaseConfig = {
-      apiKey: "AIzaSyDXJY6q1FCtWF1XHl91r7zftITndKiD_uo",
-      authDomain: "projetoginecologista.firebaseapp.com",
-      databaseURL: "https://projetoginecologista-default-rtdb.firebaseio.com",
-      projectId: "projetoginecologista",
-      storageBucket: "projetoginecologista.firebasestorage.app",
-      messagingSenderId: "814407368688",
-      appId: "1:814407368688:web:948eef77a444684211a735",
-      measurementId: "G-VLLR72TTRJ"
+      apiKey: "AIzaSyD19AiSaJosyhNL8iz4J-D1mHgbu-MOKm4",
+      authDomain: "planejamentos-83b23.firebaseapp.com",
+      projectId: "planejamentos-83b23",
+      storageBucket: "planejamentos-83b23.firebasestorage.app",
+      messagingSenderId: "651538842400",
+      appId: "1:651538842400:web:5d0b45e7df8f2ac1f0cd45",
+      measurementId: "G-GK5XJ7FZN1"
     };
 
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const stateRef = db.ref('radar_funcionamento');
+    const db = firebase.firestore();
+    const docRef = db.collection("jardim_florescimento").doc("radar_funcionamento");
 
     let radarData = { registros: [] };
 
-    stateRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        radarData = data;
+    // Escuta em Tempo Real do Firestore
+    docRef.onSnapshot((doc) => {
+      if (doc.exists) {
+        radarData = doc.data();
+        if (!radarData.registros) radarData.registros = [];
         renderAll();
       }
     });
 
-    function saveData() { stateRef.set(radarData); }
+    async function saveData() {
+      // Backup Local Instantâneo
+      localStorage.setItem('lothlorien_radar_data', JSON.stringify(radarData));
+
+      // Gravação Central no Firestore
+      try {
+        await docRef.set(radarData, { merge: true });
+      } catch (err) {
+        console.error("Erro ao salvar no Firestore:", err);
+      }
+    }
 
     function switchTab(tab) {
       const tabs = ['agora', 'hoje', 'insights', 'relatorios'];
       tabs.forEach(t => {
         document.getElementById(`sec-${t}`).classList.add('hidden');
         document.getElementById(`tab-${t}`).classList.remove('tab-active');
-        document.getElementById(`tab-${t}`).classList.add('text-slate-400');
+        document.getElementById(`tab-${t}`).classList.add('text-[#e8d8c8]/60');
       });
       document.getElementById(`sec-${tab}`).classList.remove('hidden');
       document.getElementById(`tab-${tab}`).classList.add('tab-active');
@@ -535,17 +586,17 @@
       trajList.innerHTML = '';
       radarData.registros.slice(-8).reverse().forEach(r => {
         trajList.innerHTML += `
-          <div class="p-3.5 bg-slate-900/90 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
+          <div class="p-3.5 bg-black/50 rounded-xl border border-[#c5a059]/30 text-xs flex justify-between items-center">
             <div>
               <div class="flex items-center gap-2 mb-1">
-                <span class="font-bold text-emerald-400">${r.hora}</span>
-                <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">${r.tipo} • ${r.contexto}</span>
-                ${r.bateria ? `<span class="text-[10px] text-amber-300">${r.bateria}</span>` : ''}
+                <span class="font-bold text-[#f0c987] font-sub">${r.hora}</span>
+                <span class="text-[10px] bg-black/60 text-[#e8d8c8] px-2 py-0.5 rounded border border-[#c5a059]/30 font-sub">${r.tipo} • ${r.contexto}</span>
+                ${r.bateria ? `<span class="text-[10px] text-[#81b29a] font-sub">${r.bateria}</span>` : ''}
               </div>
-              <p class="text-slate-200"><strong>Tensão/Corpo:</strong> ${r.corpo} | <strong>Pesado:</strong> ${r.pesado}</p>
-              <p class="text-emerald-300 mt-1"><strong>Orientação:</strong> ${r.acao}</p>
+              <p class="text-[#e8d8c8]"><strong>Tensão/Corpo:</strong> ${r.corpo} | <strong>Pesado:</strong> ${r.pesado}</p>
+              <p class="text-[#81b29a] mt-1 font-elfica"><strong>Orientação:</strong> ${r.acao}</p>
             </div>
-            ${r.feedback ? `<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-1 rounded-full font-bold">${r.feedback}</span>` : ''}
+            ${r.feedback ? `<span class="text-[10px] bg-black/80 text-[#f0c987] border border-[#c5a059]/50 px-2 py-1 rounded-full font-bold font-sub">${r.feedback}</span>` : ''}
           </div>`;
       });
 
@@ -558,11 +609,11 @@
       radarData.registros.forEach(r => {
         if(r.terapia) {
           pautasCont++;
-          terapiaList.innerHTML += `<li class="text-slate-800 font-medium"><strong>[${r.hora}]</strong> ${r.terapia}</li>`;
+          terapiaList.innerHTML += `<li class="text-[#0d0a07] font-medium"><strong>[${r.hora}]</strong> ${r.terapia}</li>`;
         }
       });
       if(pautasCont === 0) {
-        terapiaList.innerHTML = `<li class="italic text-slate-500">Nenhuma pauta específica registrada recentemente.</li>`;
+        terapiaList.innerHTML = `<li class="italic text-[#0d0a07]/60">Nenhuma pauta específica registrada recentemente.</li>`;
       }
 
       // Histórico Imprimível
@@ -570,9 +621,9 @@
       histTab.innerHTML = '';
       radarData.registros.slice(-5).forEach(r => {
         histTab.innerHTML += `
-          <div class="border-b border-slate-200 pb-1 flex justify-between">
+          <div class="border-b border-[#c5a059]/30 pb-1 flex justify-between">
             <span><strong>${r.hora}</strong> (${r.contexto}): ${r.corpo} | <em>Gargalo:</em> ${r.gargalo}</span>
-            <span class="font-bold text-slate-900">${r.acao}</span>
+            <span class="font-bold text-[#0d0a07]">${r.acao}</span>
           </div>
         `;
       });
@@ -583,6 +634,11 @@
         radarData.registros[radarData.registros.length - 1].feedback = status;
         saveData();
         document.getElementById('feedbackActionCard').classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
       }
     }
   </script>
